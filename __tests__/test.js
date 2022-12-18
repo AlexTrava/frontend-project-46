@@ -1,17 +1,19 @@
-import { jest } from '@jest/globals';
+import { expect, test, describe } from '@jest/globals';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import genDiff from '../src/index.js';
+import expectedJson from '../__fixtures__/expectedJson.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-const readFixtures = (filepath) => readFileSync(getFixturePath(filepath), 'utf-8');
-const resultJson = readFixtures('resultJson.js')
+// const readFixtures = (filepath) => readFileSync(getFixturePath(filepath), 'utf-8');
+// const resultJson = readFixtures('expectJson.txt')
+
 
 describe('genDiff App', () => {
     test('should be work with json', () => {
-      expect(genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual('{\n- follow: false\n  host: hexlet.io\n- proxy: 123.234.53.22\n- timeout: 50\n+ timeout: 20\n+ verbose: true\n}');
+      expect(genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(expectedJson);
     });
 });
