@@ -14,9 +14,7 @@ const getComparisonResult = (parseData1, parseData2) => {
     if (!_.isEqual(parseData1[key], parseData2[key])) {
       return `${findChange}- ${key}: ${parseData1[key]}\n${findChange}+ ${key}: ${parseData2[key]}`;
     }
-    if (_.isEqual(parseData1[key], parseData2[key])) {
-      return `${noChange}${key}: ${parseData1[key]}`;
-    }
+    return `${noChange}${key}: ${parseData1[key]}`;
   });
   return `{\n${[...result].join('\n')}\n}`;
 };
