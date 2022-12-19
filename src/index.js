@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import parse from './parse.js';
+import parse from './parsers.js';
 import getComparisonResult from './buildTree.js';
 
 const getFormat = (filepath) => path.extname(filepath).slice(1);

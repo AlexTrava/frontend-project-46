@@ -14,5 +14,6 @@ const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 
 describe('genDiff App', () => {
   test('should be work with json', () => {
     expect(genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(expectedJson);
+    expect(genDiff(getFixturePath('file1.yaml'), getFixturePath('file2.yaml'))).toEqual(expectedJson);
   });
 });
