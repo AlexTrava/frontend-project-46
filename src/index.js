@@ -12,7 +12,7 @@ const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const file1 = getFile(buildFullPath(filepath1));
   const file2 = getFile(buildFullPath(filepath2));
   const tree = getComparisonResult(file1, file2);
-  return formatter (tree, format);
+  return formatter(tree, format);
 };
 
 export default genDiff;
