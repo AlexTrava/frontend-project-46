@@ -4,56 +4,57 @@ const getKey = (node) => node.key;
 const getValue = (node) => node.value;
 const getChildren = (node) => node.children;
 const getType = (node) => node.type;
-const spaceCount = 4;
+const spaceCount = 2;
 
-const indent = (depth, ident = 0) => ' '.repeat((depth * spaceCount) + ident);
 
-const stringify = (file, depth) => {
+
+const stringify = (file, depth = 1) => {
+  const indentSize = depth * spaceCount;
+  const currentIndent = ' '.repeat(indentSize + 2);
+  const bracketIndent = ' '.repeat(indentSize - spaceCount);
+
   if (!_.isObject(file)) {
-    return String(file);
+    return `${file}`;
   }
-  const output = Object.entries(file).map(([key, value]) => `${indent(depth)}${key}: ${stringify(value, (depth + 1))}`);
-  return ['{', ...output, `${indent(depth - 1)}}`].join('\n');
+  const output = Object.entries(file)
+                       .map(([key, value]) => `${currentIndent}${key}: ${stringify(value, depth + 2)}`);
+  return ['{',...output,`${bracketIndent}}`].join('\n');
 };
 
-const stylish = (tree) => {
-  const iter = (node, depth = 1) => {
-    const lines = node.map((object) => {
-      const type = getType(object);
+const stylish = (tree, depth = 1) => {
+  const indentSize = depth * spaceCount;
+  const currentIndent = ' '.repeat(indentSize);
+  const bracketIndent = ' '.repeat(indentSize - spaceCount);
+
+    const lines = tree.flatMap((node) => {
+      const type = getType(node);
+      const key = getKey(node);
+      const value = getValue(node);
+      const children = getChildren(node);
       switch (type) {
+        case 'nested': {
+          return `${' '.repeat(indentSize + 1)} ${key}: ${stylish(children, depth + 2)}`;
+        }
         case 'added': {
-          const key = getKey(object);
-          const value = getValue(object);
-          return `${indent(depth, -2)}+ ${key}: ${stringify(value, depth + 1)}`;
+          return `${currentIndent}+ ${key}: ${stringify(value, depth + 2)}`;
         }
         case 'removed': {
-          const key = getKey(object);
-          const value = getValue(object);
-          return `${indent(depth, -2)}- ${key}: ${stringify(value, depth + 1)}`;
+          return `${currentIndent}- ${key}: ${stringify(value, depth + 2)}`;
         }
         case 'unchanged': {
-          const key = getKey(object);
-          const value = getValue(object);
-          return `${indent(depth)}${key}: ${stringify(value, depth + 1)}`;
+          return `${currentIndent}  ${key}: ${stringify(value, depth + 2)}`;
         }
         case 'changed': {
-          const key = getKey(object);
-          const beforeChanged = `${indent(depth, -2)}- ${key}: ${stringify(object.value1, depth + 1)}`;
-          const afterChanged = `${indent(depth, -2)}+ ${key}: ${stringify(object.value2, depth + 1)}`;
+          const beforeChanged = `${currentIndent}- ${key}: ${stringify(node.value1, depth + 2)}`;
+          const afterChanged = `${currentIndent}+ ${key}: ${stringify(node.value2, depth + 2)}`;
           return [beforeChanged, afterChanged];
-        }
-        case 'nested': {
-          const key = getKey(object);
-          const children = getChildren(object);
-          return `${indent(depth)}${key}: ${stringify(iter(children, depth + 1), depth + 1)}`;
         }
         default:
           throw new Error(`Unknown type - ${type}.`);
       }
     });
-    return ['{', ...lines.flat(), `${indent(depth - 1)}}`].join('\n');
-  };
-  return iter(tree, 1);
+    return ['{', ...lines, `${bracketIndent}}`].join('\n');
+
 };
 
 export default stylish;

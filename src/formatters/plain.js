@@ -23,24 +23,21 @@ const plain = (tree) => {
       .filter((data) => data.type !== 'unchanged')
       .map((data) => {
         const type = getType(data);
+        const key = getKey(data);
+        const value = getValue(data);
+        const children = getChildren(data);
         switch (type) {
           case 'added': {
-            const key = getKey(data);
-            const value = getValue(data);
             return `Property '${getFullName(parentName, key)}' was added with value: ${stringify(value)}`;
           }
           case 'removed': {
-            const key = getKey(data);
             return `Property '${getFullName(parentName, key)}' was removed`;
           }
           case 'changed': {
-            const key = getKey(data);
             const { value1, value2 } = data;
             return `Property '${getFullName(parentName, key)}' was updated. From ${stringify(value1)} to ${stringify(value2)}`;
           }
           case 'nested': {
-            const key = getKey(data);
-            const children = getChildren(data);
             const newParentName = getFullName(parentName, key);
             return iter(children, [newParentName]);
           }
