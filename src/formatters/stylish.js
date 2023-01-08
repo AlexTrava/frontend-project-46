@@ -1,9 +1,5 @@
 import _ from 'lodash';
 
-const getKey = (node) => node.key;
-const getValue = (node) => node.value;
-const getChildren = (node) => node.children;
-const getType = (node) => node.type;
 const spaceCount = 2;
 
 const stringify = (file, depth = 1) => {
@@ -25,13 +21,10 @@ const stylish = (tree, depth = 1) => {
   const bracketIndent = ' '.repeat(indentSize - spaceCount);
 
   const lines = tree.flatMap((node) => {
-    const type = getType(node);
-    const key = getKey(node);
-    const value = getValue(node);
-    const children = getChildren(node);
+    const { key, value, type } = node;
     switch (type) {
       case 'nested': {
-        return `${' '.repeat(indentSize + 1)} ${key}: ${stylish(children, depth + 2)}`;
+        return `${' '.repeat(indentSize + 1)} ${key}: ${stylish(node.children, depth + 2)}`;
       }
       case 'added': {
         return `${currentIndent}+ ${key}: ${stringify(value, depth + 2)}`;
